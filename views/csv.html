@@ -44,6 +44,9 @@
         <button type="button" class="btn btn-default" id="add" value="Add">
             <span class="glyphicon glyphicon-plus"></span> Add
         </button>
+        <button type="button" class = "btn btn-default" id ="replace">
+            <span class="glyphicon glyphicon-plus>"></span> Replace
+        </button>
         <button type="button" class="btn btn-default" id="submit" value="Download CSV">
             <span class="glyphicon glyphicon-download"></span> Download CSV
         </button>
@@ -64,8 +67,10 @@
     /*window.onbeforeunload = function() {
         return "WARNING: Reloading the page will restart the process!";
     };*/
+    $("#replace").slideUp();
     var myCSV = "grade,text\n";
     var documentsAdded = 0;
+    var selected = 0;
     function exportToCSV() {
         if (($("#grade").val() != "") || ($("#text").val() != "")) {
             addEssay();
@@ -102,23 +107,29 @@
 
             $(".docBox").slideDown(130);
             $(".docBox").mouseover(function() {
-                $(this).css("background-color","midnightblue");
-                $(this).css("color","white");
+                if (parseInt($(this).text()) != selected) {
+                    $(this).css("background-color","midnightblue");
+                    $(this).css("color","white");
+                }
             });
             $(".docBox").mouseout(function() {
-                $(this).css("background-color","lightblue");
-                $(this).css("color","black");
+                if (parseInt($(this).text()) != selected) {
+                    $(this).css("background-color","lightblue");
+                    $(this).css("color","black");
+                }
             });
-            /*This isn't working yet:*/
-
             $(".docBox").click(function() {
+                $("#add").slideUp();
+                $("#replace").slideDown();
                 var counter = 1;
-                /*var limit = (parseInt($(this).text()) - 1) * 2;*/
-                /*Note that '"' is a double quotation in two single quotes, rather than the empty string*/
+                selected = (parseInt($(this).text()));
+                $(this).css("background-color","darkred");
+                $(this).css("color","white");
                 for(var i = 0; i < myCSV.length; i++) {
                     if (myCSV.charAt(i) == "\n") {
                         if (counter < (parseInt($(this).text()))) counter++;
                         else {
+                            /*Note that '"' is a double quotation in two single quotes, rather than the empty string*/
                             var grade = myCSV.substring(i, myCSV.indexOf('"', i) - 1);
                             var text = myCSV.substring(i + grade.length + 2, myCSV.indexOf("\n", i + 1) - 1);
                             $("#grade").val(grade);
@@ -126,22 +137,12 @@
                             return;
                         }
                     }
-
-                    /*if (myCSV.charAt(i) == '"') {
-                        if (counter < limit) counter++;
-                        else {
-                            var grade = myCSV.substring(i, myCSV.indexOf('"', i) - 1);
-                            console.log(i + " " + myCSV.indexOf('"',i + 1));
-                            var text = myCSV.substring(i + grade.length, myCSV.indexOf('"', i + grade.length + 1));
-                            console.log(grade);
-                            console.log(text);
-                             $("#grade").val(grade);
-                             $("#text").val(text);
-                             return;
-                        }
-                    }*/
                 }
             });
+            $("#replace").click(function() {
+                $("#replace").slideUp();
+                $("#add").slideDown();
+            })
         }
     }
 
