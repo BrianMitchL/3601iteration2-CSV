@@ -18,6 +18,10 @@
     </ul>
 </div>
 
+        <div id="csv">
+
+        </div>
+
 <div class="row">
 
     <div>
@@ -34,9 +38,15 @@
         <label>Text</label>
         <textarea class="text form-control" id="text" placeholder="Enter Text" rows="10"></textarea>
         <br>
-        <input type="button" class="btn btn-danger" id="reset" value="Reset">
-        <input type="button" class="btn btn-default" id="add" value="Add">
-        <input type="button" class="btn btn-default" id="submit" value="Download CSV">
+        <button type="button" class="btn btn-danger" id="reset" value="Reset">
+            <span class="glyphicon glyphicon-share-alt"></span> Reset
+        </button>
+        <button type="button" class="btn btn-default" id="add" value="Add">
+            <span class="glyphicon glyphicon-plus"></span> Add
+        </button>
+        <button type="button" class="btn btn-default" id="submit" value="Download CSV">
+            <span class="glyphicon glyphicon-download"></span> Download CSV
+        </button>
     </form>
 </div>
     <br>
@@ -83,6 +93,7 @@
         }
         else {
             myCSV += $("#grade").val() + ",\"" + $("#text").val().replace(/"/g,"'") + "\"\n";
+            document.getElementById("csv").innerHTML = myCSV;
             documentsAdded++;
             $("#grade").val("");
             $("#text").val("");
@@ -100,24 +111,37 @@
             });
             /*This isn't working yet:*/
 
-            /*$(".docBox").click(function() {
-                var counter = 0;
-                var limit = (parseInt($(this).text()) - 1) * 2 - 1;
-                for(var i = 0; i < bingo.length; i++) {
-                    if (bingo.charAt(i) == '"') {
+            $(".docBox").click(function() {
+                var counter = 1;
+                /*var limit = (parseInt($(this).text()) - 1) * 2;*/
+                /*Note that '"' is a double quotation in two single quotes, rather than the empty string*/
+                for(var i = 0; i < myCSV.length; i++) {
+                    if (myCSV.charAt(i) == "\n") {
+                        if (counter < (parseInt($(this).text()))) counter++;
+                        else {
+                            var grade = myCSV.substring(i, myCSV.indexOf('"', i) - 1);
+                            var text = myCSV.substring(i + grade.length + 2, myCSV.indexOf("\n", i + 1) - 1);
+                            $("#grade").val(grade);
+                            $("#text").val(text);
+                            return;
+                        }
+                    }
+
+                    /*if (myCSV.charAt(i) == '"') {
                         if (counter < limit) counter++;
                         else {
-                            var grade = bingo.substring(i, bingo.indexOf('"',i ));
-                            console.log(i + " " + bingo.indexOf('"',i + 1));
-                            var text = bingo.substring(i + grade.length, bingo.indexOf('"', i + grade.length + 1));
+                            var grade = myCSV.substring(i, myCSV.indexOf('"', i) - 1);
+                            console.log(i + " " + myCSV.indexOf('"',i + 1));
+                            var text = myCSV.substring(i + grade.length, myCSV.indexOf('"', i + grade.length + 1));
                             console.log(grade);
                             console.log(text);
                              $("#grade").val(grade);
                              $("#text").val(text);
                              return;
                         }
-                    }
-             }*/
+                    }*/
+                }
+            });
         }
     }
 
@@ -144,6 +168,6 @@
 
         $("#reset").click(function() {
             reset();
-        })
+        });
     });
 </script>
