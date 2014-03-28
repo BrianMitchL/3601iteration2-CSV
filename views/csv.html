@@ -38,16 +38,16 @@
         <label>Text</label>
         <textarea class="text form-control" id="text" placeholder="Enter Text" rows="10"></textarea>
         <br>
-        <button type="button" class="btn btn-danger" id="reset" value="Reset">
+        <button type="button" class="btn btn-danger" id="reset">
             <span class="glyphicon glyphicon-share-alt"></span> Reset
         </button>
-        <button type="button" class="btn btn-default" id="add" value="Add">
+        <button type="button" class="btn btn-default" id="add">
             <span class="glyphicon glyphicon-plus"></span> Add
         </button>
         <button type="button" class = "btn btn-default" id ="replace">
-            <span class="glyphicon glyphicon-plus>"></span> Replace
+            <span class="glyphicon glyphicon-edit"></span> Replace
         </button>
-        <button type="button" class="btn btn-default" id="submit" value="Download CSV">
+        <button type="button" class="btn btn-default" id="submit">
             <span class="glyphicon glyphicon-download"></span> Download CSV
         </button>
     </form>
@@ -67,6 +67,9 @@
     /*window.onbeforeunload = function() {
         return "WARNING: Reloading the page will restart the process!";
     };*/
+    function replaceAt(str, start, end, text) {
+        return str.substring(0, start) + text + str.substring(end + 1);
+    }
     $("#replace").slideUp();
     var myCSV = "grade,text\n";
     var documentsAdded = 0;
@@ -139,10 +142,7 @@
                     }
                 }
             });
-            $("#replace").click(function() {
-                $("#replace").slideUp();
-                $("#add").slideDown();
-            })
+
         }
     }
 
@@ -169,6 +169,31 @@
 
         $("#reset").click(function() {
             reset();
+        });
+        $("#replace").click(function() {
+            $("#replace").slideUp();
+            $("#add").slideDown();
+            document.getElementById("csv").innerHTML = myCSV;
+
+            var counter = 1;
+            for(var i = 0; i < myCSV.length; i++) {
+                if (myCSV.charAt(i) == "\n") {
+                    if (counter < (selected)) counter++;
+                    else {
+                        var toReplace = $("#grade").val() + ", \"" + $("#text").val().replace(/"/g,"'") + "\"\n";
+                        myCSV = replaceAt(myCSV, myCSV.indexOf('\n', i - 1) + 1, myCSV.indexOf("\n", i + 1), toReplace);
+                        console.log($("#grade").val());
+                        console.log($("#text").val());
+                        console.log(selected);
+
+                        document.getElementById("csv").innerHTML = myCSV;
+                        return;
+                    }
+                }
+            }
+            selected = 0;
+            $("#grade").val("");
+            $("#text").val("");
         });
     });
 </script>
