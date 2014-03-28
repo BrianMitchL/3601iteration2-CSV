@@ -128,6 +128,7 @@
                 selected = (parseInt($(this).text()));
                 $(this).css("background-color","darkred");
                 $(this).css("color","white");
+                $(this).css("border-color","black");
                 for(var i = 0; i < myCSV.length; i++) {
                     if (myCSV.charAt(i) == "\n") {
                         if (counter < (parseInt($(this).text()))) counter++;
@@ -180,7 +181,7 @@
                 if (myCSV.charAt(i) == "\n") {
                     if (counter < (selected)) counter++;
                     else {
-                        var toReplace = $("#grade").val() + ", \"" + $("#text").val().replace(/"/g,"'") + "\"\n";
+                        var toReplace = $("#grade").val() + ",\"" + $("#text").val().replace(/"/g,"'") + "\"\n";
                         myCSV = replaceAt(myCSV, myCSV.indexOf('\n', i - 1) + 1, myCSV.indexOf("\n", i + 1), toReplace);
                         console.log($("#grade").val());
                         console.log($("#text").val());
