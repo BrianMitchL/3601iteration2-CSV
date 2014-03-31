@@ -129,17 +129,7 @@
                 var counter = 1;
                 selected = (parseInt($(this).text()));
 
-                var ancestor = document.getElementById('pastDocs');
-                var descendants = ancestor.getElementsByTagName('*');
-
-                var j, e;
-                for (j = 0; j < descendants.length; j++) {
-                    e = descendants[j];
-
-                    e.style.backgroundColor = 'lightblue';
-                    e.style.color = 'black';
-                    e.style.borderColor = 'gray';
-                }
+                deselect();
 
                 $(this).css("background-color","darkred");
                 $(this).css("color","white");
@@ -162,6 +152,17 @@
         }
     }
 
+    function deselect() {
+        var boxes = document.getElementById('pastDocs').getElementsByTagName('*');
+
+        for (var j = 0; j < boxes.length; j++) {
+            var e = boxes[j];
+
+            e.style.backgroundColor = 'lightblue';
+            e.style.color = 'black';
+            e.style.borderColor = 'gray';
+        }
+    }
     function reset() {
         if (confirm("Are you sure you want to reset?")) {
             myCSV = "grade,text\n";
@@ -200,18 +201,16 @@
                     else {
                         var toReplace = $("#grade").val() + ",\"" + $("#text").val().replace(/"/g,"'") + "\"\n";
                         myCSV = replaceAt(myCSV, myCSV.indexOf('\n', i - 1) + 1, myCSV.indexOf("\n", i + 1), toReplace);
-                        console.log($("#grade").val());
-                        console.log($("#text").val());
-                        console.log(selected);
 
                         document.getElementById("csv").innerHTML = myCSV;
+                        selected = 0;
+                        $("#grade").val("");
+                        $("#text").val("");
+                        deselect();
                         return;
                     }
                 }
             }
-            selected = 0;
-            $("#grade").val("");
-            $("#text").val("");
         });
     });
 </script>
