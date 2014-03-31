@@ -113,12 +113,14 @@
                 if (parseInt($(this).text()) != selected) {
                     $(this).css("background-color","midnightblue");
                     $(this).css("color","white");
+                    $(this).css("border-color","gray");
                 }
             });
             $(".docBox").mouseout(function() {
                 if (parseInt($(this).text()) != selected) {
                     $(this).css("background-color","lightblue");
                     $(this).css("color","black");
+                    $(this).css("border-color","gray");
                 }
             });
             $(".docBox").click(function() {
@@ -126,6 +128,19 @@
                 $("#replace").slideDown();
                 var counter = 1;
                 selected = (parseInt($(this).text()));
+
+                var ancestor = document.getElementById('pastDocs');
+                var descendants = ancestor.getElementsByTagName('*');
+
+                var j, e;
+                for (j = 0; j < descendants.length; j++) {
+                    e = descendants[j];
+
+                    e.style.backgroundColor = 'lightblue';
+                    e.style.color = 'black';
+                    e.style.borderColor = 'gray';
+                }
+
                 $(this).css("background-color","darkred");
                 $(this).css("color","white");
                 $(this).css("border-color","black");
@@ -170,6 +185,8 @@
 
         $("#reset").click(function() {
             reset();
+            $("#replace").slideUp();
+            $("#add").slideDown();
         });
         $("#replace").click(function() {
             $("#replace").slideUp();
