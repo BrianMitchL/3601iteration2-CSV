@@ -1,6 +1,21 @@
 <script>
+    var parser = new parser(myCSV);
+    var CSVArray = parser.array();
+    var arrayOfArrays = [];
 
-    
+    for (var i = 0; i < numFields + 1; i++) {
+        CSVArray.remove(0);
+    }
+
+    function getFields ( fieldIndex ) {
+        for (var i = 1; i <= numFields; i++) {
+            arrayOfArrays[i] = [];
+            for (var j = i; j <= CSVArray.length; j + numFields) {
+                arrayOfArrays[i].push(CSVArray[j])
+            }
+        }
+    }
+
 
     Morris.Donut({
     element: 'myfirstchart',
