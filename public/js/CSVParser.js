@@ -21,7 +21,6 @@
 //
 // Copyright (c) 2013 Rich Harris (@rich_harris)
 // Released under an MIT license.
-
 ;(function ( global ) {
 
     'use strict';
