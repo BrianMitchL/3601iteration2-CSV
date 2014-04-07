@@ -1,4 +1,3 @@
-
 ###
 Module dependencies.
 ###
@@ -18,6 +17,7 @@ app.set 'partials',
   scripts: 'partials/scripts'
   functions: 'partials/functions'
   visualization: 'partials/visualization'
+  tutorial: 'partials/tutorial'
 
 # all environments
 app.set "port", process.env.PORT or 3000
