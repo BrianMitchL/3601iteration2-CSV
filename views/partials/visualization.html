@@ -1,73 +1,86 @@
-<button onClick="changeData()">Change Data</button>
-
 <script>
-    !function(){
-        var gradPie={};
+    window.onload = function() {
+        var fileInput = document.getElementById('fileInput');
+        var fileDisplayArea = document.getElementById('visualization');
 
-        var pie = d3.layout.pie().sort(null).value(function(d) {return d.value;});
-        var arc = d3.svg.arc();
-        var path;
+        fileInput.addEventListener('change', function(e) {
+            var file = fileInput.files[0];
+            var textType = /text.*/;
 
-        createGradients = function(defs, colors, r){
-            var gradient = defs.selectAll('.gradient')
-                    .data(colors).enter().append("radialGradient")
-                    .attr("id", function(d,i){return "gradient" + i;})
-                    .attr("gradientUnits", "userSpaceOnUse")
-                    .attr("cx", "0").attr("cy", "0").attr("r", r).attr("spreadMethod", "pad");
+            if (file.type.match(textType)) {
+                var reader = new FileReader();
 
-            gradient.append("stop").attr("offset", "0%").attr("stop-color", function(d){ return d;});
+                reader.onload = function(e) {
+                    checkCsv(reader.result);
+                }
 
-            gradient.append("stop").attr("offset", "30%")
-                    .attr("stop-color",function(d){ return d;})
-                    .attr("stop-opacity", 1);
+                reader.readAsText(file);
+            } else {
+                alert("File not supported!");
+            }
 
-            gradient.append("stop").attr("offset", "70%")
-                    .attr("stop-color",function(d){ return "black";})
-                    .attr("stop-opacity", 1);
-        };
+        });
+    }
 
-        gradPie.draw = function(id, data, cx, cy, r){
-            var gPie = d3.select("#"+id).append("g").attr("transform", "translate(" + cx + "," + cy + ")");
-
-            arc.outerRadius(r);
-
-            createGradients(gPie.append("defs"), data.map(function(d){ return d.color; }), 2.5*r);
-
-            path = gPie.selectAll("path").data(pie(data))
-                    .enter().append("path").attr("fill", function(d,i){ return "url(#gradient"+ i+")";})
-                    .attr("d", arc).each(function(d) { this._current = d; });
-        };
-
-        gradPie.transition = function (data) {
-            path.data(pie(data)).transition().duration(750).attrTween("d", arcTween);
-        };
-
-        function arcTween(a) {
-            var i = d3.interpolate(this._current, a);
-            this._current = i(0);
-            return function(t) { return arc(i(t));  };
+    function checkCsv(text) {
+        var array = new Array();
+        var endPoint = 0;
+        while (text.search('\r') != -1) {
+            endPoint = text.search('\r');
+            array.push(text.slice(0, endPoint));
+            text = text.slice(endPoint + 1, text.length);
         }
 
-        this.gradPie = gradPie;
-    }();
-</script>
+        array.push(text);
+        var i = 0;
+        var grades = new Array();
+        grades[0] = 0;
+        grades[1] = 0;
+        grades[2] = 0;
+        grades[3] = 0;
+        while (i < array.length) {
+            grades[getGrade(array[i])]++;
+            i++;
+        }
 
-<script>
+        Morris.Donut({
+            element: 'myfirstchart',
+            data: [
+                {label: "Number of 0 papers: ", value: grades[0]},
+                {label: "Number of 1 papers: ", value: grades[1]},
+                {label: "Number of 2 papers: ", value: grades[2]},
+                {label: "Number of 3 papers: ", value: grades[3]}
+            ],
+            labelColor: 'black',
+            colors: [
+                '#CB5DF5',
+                '#8451FF',
+                '#6375E8',
+                '#60B8FF'
+            ]
+        });
+        document.getElementById("description").innerHTML = "This is the distribution of grades you submitted in your csv. Here is what we think. " +
+                "Now make a model or remake your csv!";
+        $('#buttons').show();
 
-    var salesData=[
-        {label:"Basic", value:324, color:"#3366CC"},
-        {label:"Plus", value:560, color:"#DC3912"},
-        {label:"Lite", value:246, color:"#FF9900"},
-        {label:"Elite", value:438, color:"#109618"},
-        {label:"Delux", value:293, color:"#990099"}
-    ];
+    }
 
-    d3.select("body").append("svg").attr("width", 400).attr("height", 400)
-            .append("g").attr("id","salespie");
+    function getGrade(text) {
+        var txt=text;
 
-    gradPie.draw("salespie", salesData, 200, 200, 160);
+        var re1='.*?';	// Non-greedy match on filler
+        var re2='\\d+';	// Uninteresting: int
+        var re3='.*?';	// Non-greedy match on filler
+        var re4='\\d+';	// Uninteresting: int
+        var re5='.*?';	// Non-greedy match on filler
+        var re6='(\\d+)';	// Integer Number 1
 
-    function changeData(){
-        gradPie.transition(salesData.map(function(d){ d.value=1000*Math.random(); return d;}));
+        var p = new RegExp(re1+re2+re3+re4+re5+re6,["i"]);
+        var m = p.exec(txt);
+        if (m != null)
+        {
+            var int1=m[1];
+            return int1;
+        }
     }
 </script>
