@@ -11,8 +11,7 @@ var numFields;
 var fieldNames = [];
 var selected = 0;
 
-//Much of this function was found here:
-//http://stackoverflow.com/questions/1431094/how-do-i-replace-a-character-at-a-particular-index-in-javascript
+//Much of this function was found here: http://stackoverflow.com/questions/1431094/how-do-i-replace-a-character-at-a-particular-index-in-javascript
 function replaceAt(str, start, end, text) {
     return str.substring(0, start) + text + str.substring(end + 1);
 }
@@ -124,7 +123,7 @@ function docBoxColors(element, bgColor, color, bdColor) {
     $(element).css("border-color",bdColor);
 }
 
-//Performs the replacing in myCSV. UGLY! But it works.
+//Performs the replacing in myCSV.
 function replace() {
     editButtons();
     var counter = 1;
@@ -137,7 +136,7 @@ function replace() {
                     toReplace += $("#toScore" + j + "").val() + ",";
                 }
                 toReplace += "\"" + $("#text").val().replace(/"/g,"'") + "\"\r\n";
-                myCSV = replaceAt(myCSV, myCSV.indexOf('\n', i - 1) + 1, myCSV.indexOf("\n", i + 1), toReplace); //Finds the ith instance of a line break, then replaces starting at that line.
+                myCSV = replaceAt(myCSV, myCSV.indexOf('\n', i - 1) + 1, myCSV.indexOf("\n", i + 1), toReplace);
 
                 selected = 0;
                 clearAllFields();
@@ -148,7 +147,6 @@ function replace() {
     }
 }
 
-//Deselects all docBoxes
 function deselect() {
     var boxes = document.getElementById('pastDocs').getElementsByTagName('*');
 
@@ -169,14 +167,12 @@ function clearAllFields() {
     $("#text").val("");
 }
 
-//Runs cancel.
 function cancelReplace() {
     deselect();
     editButtons();
     clearAllFields();
 }
 
-//Clears all global variables, shows/hides divs to get to start, clears divs that may have stored any information.
 function reset() {
     if (confirm("Are you sure you want to reset?")) {
         editButtons();
@@ -198,7 +194,6 @@ function reset() {
     }
 }
 
-//Sets the number of text fields for number of scorers. Runs when dropdown is selected.
 function addFields(numToAdd) {
     numFields = numToAdd;
     var template1 = '<div class="fields">\n</div><input class="field form-control" id="field';
@@ -211,22 +206,18 @@ function addFields(numToAdd) {
     $("#saveFields").show();
 }
 
-//Runs when you hit save. Inserts the name of the fields into the fields.
 function saveFields() {
-    var prompt = $("#promptField").val();
     var tempbool = true;
     for (var i = 1; i <= numFields; i++) {
         if ($("#field" + i + "").val()== "") {
             tempbool = false;
         }
     }
-    if ($("#promptField").val()=="") {
-        window.alert("Please enter the prompt");
-    }
-    else if (tempbool == true) {
+    if (tempbool == true) {
         for (var i = 1; i <= numFields; i++) {
             fieldNames.push($("#field" + i + "").val());
             myCSV += $("#field" + i + "").val() + ",";
+            console.log(fieldNames);
         }
         var template1 = '<div class="input-group fields">\n<span class="input-group-addon">';
         var template2 = '</span>\n<input type="text" class="form-control" id="toScore';
@@ -236,7 +227,6 @@ function saveFields() {
         for (var i = 1; i < numFields+ 1; i++) {
             temp += template1 + fieldNames[i-1] + template2 + i + template3 + fieldNames[i-1] + template4;
         }
-        document.getElementById("promptSpace").innerHTML="<strong>Your Prompt: </strong>" + prompt;
         document.getElementById("fieldScores").innerHTML=temp;
         myCSV += "text\r\n"
         $("#fieldNames").hide();
@@ -246,28 +236,11 @@ function saveFields() {
     }
 }
 
-//Brings up a text field to edit the prompt
-function editPrompt() {
-    $('#editPrompt').slideUp();
-    $('#savePrompt').slideDown();
-    document.getElementById("promptSpace").innerHTML= "<label>New Prompt: </label>\n<input class='form-control' id='promptField2' name='promptField2' placeholder='Enter the Prompt for the Writing Submissions'>";
-}
-
-//Saves the prompt entered into the text field
-function savePrompt() {
-    prompt = $("#promptField2").val();
-    $("#editPrompt").slideDown();
-    $("#savePrompt").slideUp();
-    document.getElementById("promptSpace").innerHTML= "<strong>Your Prompt: </strong>" + prompt;
-}
-
-//Hides the things that need to be hidden at the beginning.
 $(document).ready(function() {
     $("#saveFields").hide();
     $("#workZone").hide();
     $("#replace").hide();
     $("#cancel").hide();
-    $("#savePrompt").hide();
 
     $("#submit").click(function() {
         exportToCSV();
@@ -291,14 +264,6 @@ $(document).ready(function() {
 
     $("#cancel").click(function() {
         cancelReplace();
-    });
-
-    $("#editPrompt").click(function() {
-        editPrompt();
-    });
-
-    $("#savePrompt").click(function() {
-        savePrompt();
     });
 });
 </script>
